@@ -1,0 +1,27 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 960px;
+  height: 540px;
+  box-sizing: border-box;
+  display: flex;
+  overflow: hidden;
+}
+
+#text {
+  margin: 0;
+  margin-top: 100%;
+  width: 100%;
+  color: forestgreen;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  transition: all 0.2s ease-in-out;
+}
