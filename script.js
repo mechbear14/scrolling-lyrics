@@ -1,54 +1,93 @@
 const SUPER_START_SIGNAL = /^\$\$/;
 const SUPER_END_SIGNAL = /.+\$\$/;
 const SUPER_MARK = /\$\$/;
+const SMALL_START_SIGNAL = /^%%/;
+const SMALL_END_SIGNAL = /.+%%/;
+const SMALL_MARK = /%%/;
+const END_MARK = /.+\./;
 
 const textBlock = document.getElementById("textBlock");
 
-let words = text.split(/ /g);
-let target = textBlock;
+let words;
+let target;
+let className = "normal";
 
-function superBegin() {
-  let textSpan = document.createElement("span");
-  textSpan.classList.add("super");
-  textBlock.append(textSpan);
-  target = textSpan;
-}
+const addP = function(className) {
+  let p = document.createElement("p");
+  p.classList.add(className);
+  textBlock.appendChild(p);
+  target = p;
+};
 
-function superEnd() {
-  let textSpan = document.createElement("p");
-  textSpan.classList.add("normal");
-  textBlock.append(textSpan);
-  target = textSpan;
-}
+const reset = function() {
+  text = quotes[counter];
+  textBlock.style.marginTop = "100%";
+  words = text.split(/ /g);
+  while (textBlock.firstChild) {
+    textBlock.removeChild(textBlock.firstChild);
+  }
+  addP("normal");
+};
 
-function render() {
-  let begin = SUPER_START_SIGNAL.test(words[0]);
-  let end = SUPER_END_SIGNAL.test(words[0]);
-  let word = words[0].split(SUPER_MARK).join("");
+const render = function() {
+  window.removeEventListener("keypress", next);
+  let time = 400;
 
-  if (begin) superBegin();
+  let superBegin = SUPER_START_SIGNAL.test(words[0]);
+  let superEnd = SUPER_END_SIGNAL.test(words[0]);
+  let smallBegin = SMALL_START_SIGNAL.test(words[0]);
+  let smallEnd = SMALL_END_SIGNAL.test(words[0]);
+  let sentenceEnd = END_MARK.test(words[0]);
 
-  let blank = target.textContent === "";
-  if (blank) {
-    target.textContent += `${word}`;
-  } else {
-    target.textContent += ` ${word}`;
+  if (superBegin) addP("super");
+  if (smallBegin) addP("small");
+
+  let span = document.createElement("span");
+  let word = words[0]
+    .split(SUPER_MARK)
+    .join("")
+    .split(SMALL_MARK);
+  span.textContent = word;
+  span.style.opacity = 0;
+  target.appendChild(span);
+  let space = document.createElement("span");
+  space.textContent = " ";
+  target.classList.add("space");
+  target.appendChild(space);
+  if (textBlock.scrollHeight > textBlock.clientHeight) {
+    textBlock.style.marginTop = `${540 - textBlock.scrollHeight}px`;
   }
 
-  if (end) superEnd();
+  if (superEnd) addP("normal");
+  if (smallEnd) addP("normal");
+  if (sentenceEnd) {
+    addP("normal");
+    time = 1000;
+  }
 
   words.shift();
-  console.log(begin, end, textBlock.innerHTML);
-
-  if (textBlock.scrollHeight > textBlock.clientHeight) {
-    textBlock.style.marginTop = `calc(540px - ${textBlock.scrollHeight}px)`;
+  if (words[0]) {
+    window.setTimeout(render, time);
+  } else {
+    if (textBlock.scrollHeight < 270) {
+      textBlock.style.marginTop = `${(540 - textBlock.scrollHeight) / 2}px`;
+    } else {
+      textBlock.style.marginTop = `calc(${540 -
+        textBlock.scrollHeight}px - 7rem)`;
+    }
+    window.addEventListener("keypress", next);
   }
 
-  if (words.length === 0) {
-    window.clearInterval(handle);
+  span.style.opacity = 1;
+};
+
+const next = function(e) {
+  if (e.key === " ") {
+    counter = (counter + 1) % quotes.length;
+    reset();
+    render();
   }
-}
+};
 
-superEnd();
-
-let handle = window.setInterval(render, 500);
+reset();
+render();

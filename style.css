@@ -6,9 +6,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #222;
 }
 
 .container {
+  position: relative;
   width: 960px;
   height: 540px;
   box-sizing: border-box;
@@ -20,7 +22,7 @@ body {
   margin: 0;
   margin-top: 100%;
   width: 100%;
-  color: forestgreen;
+  color: rgba(255, 255, 255, 0.4);
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   text-transform: uppercase;
@@ -28,7 +30,17 @@ body {
 }
 
 p {
+  margin: 0.5rem;
+}
+
+span {
+  display: inline-block;
+  transition: all 0.2s ease-in-out;
   margin: 0;
+}
+
+.space {
+  white-space: pre-wrap;
 }
 
 .normal {
@@ -36,6 +48,10 @@ p {
 }
 
 .super {
-  display: block;
   font-size: 7rem;
+}
+
+.small {
+  font-size: 0.5rem;
+  font-style: italic;
 }
