@@ -46,21 +46,24 @@ const render = function() {
   let word = words[0]
     .split(SUPER_MARK)
     .join("")
-    .split(SMALL_MARK);
+    .split(SMALL_MARK)
+    .join("");
   span.textContent = word;
   span.style.opacity = 0;
   target.appendChild(span);
-  let space = document.createElement("span");
-  space.textContent = " ";
-  target.classList.add("space");
-  target.appendChild(space);
+  if (!SUPER_START_SIGNAL.test(words[1])) {
+    let space = document.createElement("span");
+    space.textContent = " ";
+    space.classList.add("space");
+    target.appendChild(space);
+  }
   if (textBlock.scrollHeight > textBlock.clientHeight) {
     textBlock.style.marginTop = `${540 - textBlock.scrollHeight}px`;
   }
 
   if (superEnd) addP("normal");
   if (smallEnd) addP("normal");
-  if (sentenceEnd) {
+  if (sentenceEnd && !Array.from(target.classList).includes("small")) {
     addP("normal");
     time = 1000;
   }
@@ -73,7 +76,7 @@ const render = function() {
       textBlock.style.marginTop = `${(540 - textBlock.scrollHeight) / 2}px`;
     } else {
       textBlock.style.marginTop = `calc(${540 -
-        textBlock.scrollHeight}px - 7rem)`;
+        textBlock.scrollHeight}px - 4rem)`;
     }
     window.addEventListener("keypress", next);
   }
